@@ -22,13 +22,22 @@ class CurrentMonthFragment : Fragment() {
 
     private lateinit var _nextButton : Button
 
-    //  ここから
+    private lateinit var _dateManager : DateManager
+    // 読み取り専用 val
+    private val _SPAN_COUNT : Int = 7
 
+
+    /**
+     * コールバックメソッドは onCreate   onCreateView   onViewCreated   非推奨のonActivityCreated   推奨のonViewStateRestored  の順で呼ばれる
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
+
+
+        // 最後に return viewをすること
         return inflater.inflate(R.layout.fragment_current_month, container, false)
     }
 

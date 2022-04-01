@@ -3,8 +3,9 @@ package to.msn.wings.kotlincalendarrecyclerview
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.fragment.app.FragmentActivity
 
-class TimeScheduleDatabaseHelper(context: Context): SQLiteOpenHelper(context, DBNAME, null, VERSION){
+class TimeScheduleDatabaseHelper(context: Context?): SQLiteOpenHelper(context, DBNAME, null, VERSION){
 
     // クラス内のprivate定数を宣言するためにcompanion objectブロックとする。
     companion object {

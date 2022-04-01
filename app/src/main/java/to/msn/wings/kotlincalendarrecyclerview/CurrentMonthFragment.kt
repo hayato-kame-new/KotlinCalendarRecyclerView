@@ -1,6 +1,7 @@
 package to.msn.wings.kotlincalendarrecyclerview
 
 
+
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
@@ -11,7 +12,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class CurrentMonthFragment : Fragment() {
@@ -52,10 +56,10 @@ class CurrentMonthFragment : Fragment() {
 
         _dateManager = DateManager()  // コンストラクタの呼び出し DateManager型
         // _dateManagerオブジェクトから インスタンスメソッドを呼び出す 引数なしの方を呼び出す
-        val days =  _dateManager.getDays()  // List<Date>型
+        val dates =  _dateManager.getDays()  // List<Date>型
 
-        val firstDate = days.get(0)  // Date型
-        val lastDate = days.get(days.size -1 )   // Date型
+        val firstDate = dates.get(0)  // Date型
+        val lastDate = dates.get(dates.size -1 )   // Date型
 
         // 文字列にする  "yyyy-MM-dd" の形にすること SQLでバインドするため  期間を指定してSELECTする
         val fDayString = SimpleDateFormat("yyyy-MM-dd").format(firstDate)  // String型
@@ -63,6 +67,7 @@ class CurrentMonthFragment : Fragment() {
 
         // リストや配列のファクトリ関数である listOf や arrayOf の引数に何も指定しないと、空の配列やリストを作成することができます
         // 通常は MutableList の方を使えばいい
+        // データベースから取得した データを データクラスSchedule のインスタンスにして、リストにしていく
         val list = mutableListOf<Schedule>()  // Schedule は　データクラスです
 
         val context = this.context  // this.activity でもいい
@@ -111,7 +116,6 @@ class CurrentMonthFragment : Fragment() {
                 schedule =
                     Schedule(_id, scheduledate, starttime, endtime, scheduletitle, schedulememo)
                 list.add(schedule)  // ループの中で どんどんリストに足していく
-
             }
 
         }catch(e: SQLiteException){
@@ -122,16 +126,99 @@ class CurrentMonthFragment : Fragment() {
         }
 
         // ここから
-
-     //   _titleText = view.findViewById<TextView>(R.id.titleText)
+         _titleText = view.findViewById<TextView>(R.id.titleText)
         // 最初の土曜日を取得する   最初の土曜日は、その月に必ずなってるから
         // 最初の土曜日を取得する   最初の土曜日は、その月に必ずなってるから
-    //    val firstSaturdayDate: Date = dates.get(6)
+         val firstSaturdayDate: Date = dates.get(6)
 
+        var format : SimpleDateFormat = SimpleDateFormat("今月のカレンダー yyyy年 MM月")
+        val title : String = format.format(firstSaturdayDate)
+        _titleText.text = title
+
+        // 表示用のフォートマットし直し
+        format = SimpleDateFormat("d")  // "dd" だと 01 02 となってしまうので "d" とする
+
+        // もう一つフォーマット用意 非表示のTextViewに使う
+        val sdFormat : SimpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
+
+        // 比較をするために本日現在を取得する
+        val calendar = Calendar.getInstance()
+        val todayMonth = calendar[Calendar.MONTH] + 1 // 現在の月 Calendar.MONTHは 0　から始まるので注意
+
+        val todayDay = calendar[Calendar.DATE] // 現在の日
+
+
+        /**
+         * RecyclerViewで CardViewに表示するリスト.
+         * データクラスCalendarCellItem型のリスト
+         */
+        val data = mutableListOf<CalendarCellItem>()  // CalendarCellItem は　データクラスです
+        var item : CalendarCellItem? = null
+
+        for ( i in 0..dates.size - 1) {  // 0 からにする リストの添字だから
+            var date : Date = dates.get(i)
+            // Calendarに変換する
+            calendar.time = date
+            val y = calendar[Calendar.YEAR]
+            val m = calendar[Calendar.MONTH] + 1
+            val d = calendar[Calendar.DATE]
+
+            var todayText : String = ""  // 初期値は空文字で
+            if (todayMonth == m && todayDay == d) {
+                todayText = "●"  // 本日だったら印をつける
+            }
+
+            var dateText : String = format.format(date)
+            var viewGoneText : String = sdFormat.format(date) // 2017/03/02  yyyy/MM/dd という形にする
+
+            // スケジュール表示の文字列
+            var schedules : String = ""
+            // データベースから 取得した listの中に、同じ日付のデータがあれば、そのデータからスケジュールの開始時間とタイトルを取得して文字列にする
+            for ( schedule : Schedule in list) {
+                val scheduledate: String = schedule.scheduledate // "2022-03-25"
+
+                if ( y ==  (scheduledate.substring(0, 4)).toIntOrNull() &&  m == (scheduledate.substring(5, 7)).toIntOrNull()
+                       && d == (scheduledate.substring(8)).toIntOrNull()) {
+                    // 同じ日付のものが見つかったら セルの中に表示するので
+                    var scheduleTitle : String =  schedule.scheduletitle
+                    //  タイトルに改行があったら取り除いて、カレンダーのCardViewに表示したいので
+                    scheduleTitle =  scheduleTitle.replace("[\r\n]", " ");  // Kotlinに replaceAllメソッドはない 代わりにreplace
+
+                    if (scheduleTitle.length > 7) {
+                        scheduleTitle =  scheduleTitle.substring(0, 8);
+                    }
+                    schedules += schedule.starttime + "~ " + scheduleTitle + "\n"
+                }
+            }
+
+            // データクラスのインスタンスを生成する
+           item = CalendarCellItem(i.toLong(), dateText, todayText, viewGoneText, schedules)  // コンストラクタ
+        }
+        if (item != null) {
+            data.add(item)
+        }
+
+
+        val rv: RecyclerView = view.findViewById(R.id.rv)
+
+        rv.setHasFixedSize(true) // パフォーマンス向上
+
+        // グリッド状にカードを配置する 7つづつ
+        val manager = GridLayoutManager(this.activity, _SPAN_COUNT)
+        rv.layoutManager = manager
+
+        val adapter: RecyclerView.Adapter<*> = CalendarAdapter(data)
+        val c = adapter.itemCount
+
+        // 追加してみた
+        adapter.notifyDataSetChanged() // そもそもnotifyDataSetChangedは、リスト全体を更新するためのメソッドAdapterの内容を更新
+
+
+        rv.adapter = adapter
 
 
         // 最後に return viewをすること
-      //  return inflater.inflate(R.layout.fragment_current_month, container, false)
+
         return view
     }
 

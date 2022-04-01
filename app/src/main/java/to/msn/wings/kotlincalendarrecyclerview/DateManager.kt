@@ -1,5 +1,6 @@
 package to.msn.wings.kotlincalendarrecyclerview
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DateManager {  // クラス定義と一緒に定義されるコンストラクタ 引数なし
@@ -92,6 +93,25 @@ class DateManager {  // クラス定義と一緒に定義されるコンスト�
        //  _calendar.setTime(nowDate)
         return days
 
+    }
+
+    //当月かどうか確認
+    fun isCurrentMonth(date: Date?): Boolean {
+        val format = SimpleDateFormat("yyyy.MM", Locale.US)
+        // _calendar = Calendar.getInstance()
+        val currentMonth: String = format.format(_calendar.getTime())
+        return if (currentMonth == format.format(date)) {
+            true
+        } else {
+            false
+        }
+    }
+
+    //曜日を取得
+    fun getDayOfWeek(date: Date?): Int {
+       //  val calendar = Calendar.getInstance()
+        _calendar.time = date
+        return _calendar[Calendar.DAY_OF_WEEK]
     }
 
 

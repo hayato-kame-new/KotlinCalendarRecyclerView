@@ -1,6 +1,7 @@
 package to.msn.wings.kotlincalendarrecyclerview
 
 
+import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -42,7 +43,9 @@ class MonthCalendarFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
+        val parentActivity: Activity? = activity
+
         val view: View = inflater.inflate(R.layout.fragment_month_calendar, container, false)
 
       //  val context : Context? = this.context
@@ -214,6 +217,54 @@ class MonthCalendarFragment : Fragment() {
             }
         }
 
+        // 最初の土曜日は、その月に必ずなってるから 取得して
+        val firstSaturdayDate = dates[6]
+
+        // 表示してる月よりも１つ前の月を表示するためのボタン
+        _prevButton = view.findViewById(R.id.prevButton)
+        _prevButton.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            calendar.time = firstSaturdayDate
+            calendar.add(Calendar.MONTH, -1) // -1 をして ひと月前の最初の土曜日の日付にしています
+            var date: Date? = Date()
+            // Date型に変換する これを遷移先に送ります これで1月前の最初の土曜日の日付が取得できている
+            date = calendar.time
+            val intent = Intent(parentActivity, MonthCalendarActivity::class.java)
+            intent.putExtra("prevButtonDate", date) // 1月前の最初の土曜日の日付を送る Date型情報を渡します
+            startActivity(intent)
+
+            // 所属しているアクティビティを finish()で終了させること
+            val parentActivity: Activity? = activity
+            parentActivity!!.finish()
+        }
+
+        // 次の月を表示するためのボタン
+        _nextButton = view.findViewById(R.id.nextButton)
+        _nextButton.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            calendar.time = firstSaturdayDate
+            calendar.add(Calendar.MONTH, 1) // +1 してる ひと月先に
+            var date: Date? = Date()
+            // これで1月先の最初の土曜日の日付が取得できている
+            date = calendar.time
+            val intent = Intent(parentActivity, MonthCalendarActivity::class.java)
+            intent.putExtra("nextButtonDate", date) // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
+            startActivity(intent)
+
+            // 所属しているアクティビティを finish()で終了させること
+            val parentActivity: Activity? = activity
+            parentActivity!!.finish()
+        }
+
+        //  今月の表示に戻る MainActivityに戻る  自分自身が所属するアクティビティを終了させます
+        _currentMonthButton = view.findViewById(R.id.currentMonthButton)
+        _currentMonthButton.setOnClickListener {
+            val intent = Intent(parentActivity, MainActivity::class.java)
+            startActivity(intent)
+            // 自分自身が所属するアクティビティを終了させます
+            val parentActivity: Activity? = activity
+            parentActivity!!.finish()
+        }
 
         val rv: RecyclerView = view.findViewById(R.id.rv)
 
@@ -229,12 +280,9 @@ class MonthCalendarFragment : Fragment() {
         // 追加してみた
         adapter.notifyDataSetChanged() // そもそもnotifyDataSetChangedは、リスト全体を更新するためのメソッドAdapterの内容を更新
 
-
         rv.adapter = adapter
 
-
         // 最後に return viewをすること
-
         return view
     }
 

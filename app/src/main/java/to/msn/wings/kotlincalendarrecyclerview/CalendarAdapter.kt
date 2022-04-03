@@ -117,13 +117,15 @@ class CalendarAdapter(private val _data : List<CalendarCellItem>) : RecyclerView
         for (i in _data.indices) {  // i　は　0からスタートになってる
             if (position === i * 7) {  // 日曜日
                 cardView.setCardBackgroundColor(null)
-                cardView.setCardBackgroundColor(Color.parseColor("#FF0800"))
+                cardView.setBackgroundColor(ContextCompat.getColor(holder.view.context, R.color.cardScheduleSunday))
+                // cardView.setCardBackgroundColor(Color.parseColor("#FF0800"))
                 dateText.setTextColor(Color.parseColor("#FFFFFF"))
                 textViewToday.setTextColor(Color.parseColor("#FFFFFF"))
             }
             if (position === i * 7 + 6) {  // 土曜日
                 cardView.setCardBackgroundColor(null)
-                cardView.setCardBackgroundColor(Color.parseColor("#0067c0"))
+                cardView.setBackgroundColor(ContextCompat.getColor(holder.view.context, R.color.cardScheduleSaturday))
+              //  cardView.setCardBackgroundColor(Color.parseColor("#0067c0"))
                 dateText.setTextColor(Color.parseColor("#FFFFFF"))
                 textViewToday.setTextColor(Color.parseColor("#FFFFFF"))
             }
@@ -139,8 +141,6 @@ class CalendarAdapter(private val _data : List<CalendarCellItem>) : RecyclerView
             // 通常(スマホサイズ)画面ならば
             // ここで、属性を変更できる
         }
-
-
     }
 
     /**

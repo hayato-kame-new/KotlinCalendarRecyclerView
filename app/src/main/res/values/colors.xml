@@ -18,8 +18,9 @@
     <color name="whiteColor">#FFF</color>
     <color name="blackColor">#000</color>
 
-
+    #FF0800
     <color name="pinkToday">#ffc9d2</color>
-    <color name="cardSchedule">#ffc</color>
-
+    <color name="cardSchedule">#FFFCF3</color>
+    <color name="cardScheduleSunday">#FF0800</color>
+    <color name="cardScheduleSaturday">#0067c0</color>
 </resources>

@@ -209,9 +209,9 @@ class MonthCalendarFragment : Fragment() {
 
             // データクラスのインスタンスを生成する
             item = CalendarCellItem(i.toLong(), dateText, todayText, viewGoneText, schedules)  // コンストラクタ
-        }
-        if (item != null) {
-            data.add(item)
+            if (item != null) {
+                data.add(item)
+            }
         }
 
 

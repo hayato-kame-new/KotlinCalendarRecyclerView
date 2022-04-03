@@ -1,11 +1,13 @@
 package to.msn.wings.kotlincalendarrecyclerview
 
 
-
+import android.app.Activity
+import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,8 +51,8 @@ class CurrentMonthFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-       // val parentActivity = this.activity
 
+        val parentActivity: Activity? = activity
         // 注意 import android.R　　を書いてると エラーになるので注意
         val view = inflater.inflate(R.layout.fragment_current_month, container, false)  // View型
 
@@ -111,6 +113,18 @@ class CurrentMonthFragment : Fragment() {
                 endtime = cursor.getString(index_endtime);
                 scheduletitle = cursor.getString(index_scheduletitle);
                 schedulememo = cursor.getString(index_schedulememo);
+
+
+                Log.i("SQLITE", "_id : " + _id + " " +
+                        "scheduledate : " + scheduledate + " " +
+                        "starttime : " + starttime + " " +
+                        "endtime : " + endtime + " " +
+                        "scheduletitle : " + scheduletitle + " " +
+                        "schedulememo : " + schedulememo + " "
+                );
+
+
+
 
                 // インスタンス生成  schedule変数に null から 上書きする
                 schedule =
@@ -193,11 +207,46 @@ class CurrentMonthFragment : Fragment() {
 
             // データクラスのインスタンスを生成する
            item = CalendarCellItem(i.toLong(), dateText, todayText, viewGoneText, schedules)  // コンストラクタ
-        }
-        if (item != null) {
-            data.add(item)
+            if (item != null) {
+                data.add(item)
+            }
         }
 
+        // 表示してる月よりも１つ前の月を表示するためのボタン
+        _prevButton = view.findViewById<Button>(R.id.prevButton)
+        _prevButton.setOnClickListener {
+            // MainActivityで今、表示をしている月の情報を取得する MainActivityでは、初期の画面 今月のカレンダーを表示するので
+            //  アクティビティを新たに生成し、
+            //  新しいアクティビティにMainActivityの firstSaturdayDateの情報から、１ヶ月前にした情報を渡す
+            // Date型の計算を行いたい場合には、Calendar型に一度変換し、計算を行います。
+            val calendar = Calendar.getInstance()
+            calendar.time = firstSaturdayDate
+            calendar.add(Calendar.MONTH, -1) // -1 をして ひと月前に
+            var date: Date? = Date()
+            // これで1月前の最初の土曜日の日付が取得できている
+            date = calendar.time
+
+            //  Intent intent = new Intent(MainActivity.this, PreAndNextMonthCalendarActivity.class);
+            val intent = Intent(parentActivity, MonthCalendarActivity::class.java)
+            intent.putExtra("prevButtonDate", date) // 1月前の最初の土曜日の日付を送る Date型情報を渡します
+            startActivity(intent) // Mainアクティビティは終わらせずそのまま メインはバックキーで戻れるのでメモリの解放はありません
+        }
+
+
+        // 次の月を表示するためのボタン
+        _nextButton = view.findViewById<Button>(R.id.nextButton)
+        _nextButton.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            calendar.time = firstSaturdayDate
+            calendar.add(Calendar.MONTH, 1) // +1 してる ひと月先に
+            var date: Date? = Date()
+            // これで1月先の最初の土曜日の日付が取得できている
+            date = calendar.time
+            //  Intent intent = new Intent(MainActivity.this, PreAndNextMonthCalendarActivity.class);
+            val intent = Intent(parentActivity, MonthCalendarActivity::class.java)
+            intent.putExtra("nextButtonDate", date) // 1月先の最初の土曜日の日付を送ってる Date型情報を渡します
+            startActivity(intent) // Mainアクティビティは終わらせずそのまま メインはバックキーで戻れるのでメモリの解放はありません
+        }
 
         val rv: RecyclerView = view.findViewById(R.id.rv)
 
@@ -213,12 +262,9 @@ class CurrentMonthFragment : Fragment() {
         // 追加してみた
         adapter.notifyDataSetChanged() // そもそもnotifyDataSetChangedは、リスト全体を更新するためのメソッドAdapterの内容を更新
 
-
         rv.adapter = adapter
 
-
         // 最後に return viewをすること
-
         return view
     }
 

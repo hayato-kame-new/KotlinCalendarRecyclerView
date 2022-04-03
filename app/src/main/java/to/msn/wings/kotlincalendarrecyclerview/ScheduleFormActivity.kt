@@ -1,0 +1,11 @@
+package to.msn.wings.kotlincalendarrecyclerview
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+
+class ScheduleFormActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_schedule_form)
+    }
+}

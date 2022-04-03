@@ -20,5 +20,6 @@
 
 
     <color name="pinkToday">#ffc9d2</color>
+    <color name="cardSchedule">#ffc</color>
 
 </resources>

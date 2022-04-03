@@ -10,6 +10,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KotlinCalendarRecyclerView">
         <activity
+            android:name=".TimeScheduleActivity"
+            android:exported="false"
+            android:label="@string/title_activity_time_schedule"
+            android:theme="@style/Theme.KotlinCalendarRecyclerView.NoActionBar" />
+        <activity
+            android:name=".ScheduleFormActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MonthCalendarActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

@@ -1,7 +1,7 @@
 package to.msn.wings.kotlincalendarrecyclerview
 
 
-
+import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class CurrentMonthFragment : Fragment() {
+class MonthCalendarFragment : Fragment() {
 
     private var _isLayoutXlarge : Boolean = true  // 初期値を trueにしておく
 
@@ -32,53 +32,79 @@ class CurrentMonthFragment : Fragment() {
 
     private lateinit var _nextButton : Button
 
+    private lateinit var _currentMonthButton : Button
+
     private lateinit var _dateManager : DateManager
     // 読み取り専用 val
     private val _SPAN_COUNT : Int = 7
 
-
-    /**
-     * コールバックメソッドは onCreate   onCreateView   onViewCreated
-     * 非推奨のonActivityCreated   推奨のonViewStateRestored  の順で呼ばれるので
-     * この onCreateViewコールバックメソッドの後に、 onViewStateRestoredコールバックメソッドが呼ばれます
-     * データベースに接続して、現在の月のカレンダーを表示させる処理を書く
-     * ボタンをクリックすると、前の月、後ろの月のカレンダーへ遷移する
-     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
+        val view: View = inflater.inflate(R.layout.fragment_month_calendar, container, false)
 
-       // val parentActivity = this.activity
+      //  val context : Context? = this.context
+        val intent: Intent? = this.activity?.intent
+        var prevButtonDate: Date? = null
+        var nextButtonDate: Date? = null
+        var specifyDate: Date? = null
+        val extras = intent?.extras
 
-        // 注意 import android.R　　を書いてると エラーになるので注意
-        val view = inflater.inflate(R.layout.fragment_current_month, container, false)  // View型
+        if (extras != null) {
+            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
+            prevButtonDate = intent.getSerializableExtra("prevButtonDate") as Date? // nullが入ってる可能性
+            //  null かどうかのチェックが必要です どっちのボタンから遷移してきたのか
+            nextButtonDate = intent.getSerializableExtra("nextButtonDate") as Date? // nullが入ってる可能性
+            // null かどうかのチェックが必要です
+            specifyDate = intent.getSerializableExtra("specifyDate") as Date? // nullが入ってる可能性
+        }
+        _dateManager = DateManager()
 
-        _dateManager = DateManager()  // コンストラクタの呼び出し DateManager型
-        // _dateManagerオブジェクトから インスタンスメソッドを呼び出す 引数なしの方を呼び出す
-        val dates =  _dateManager.getDays()  // List<Date>型
+        var dates: List<Date>? = null
 
-        val firstDate = dates.get(0)  // Date型
-        val lastDate = dates.get(dates.size -1 )   // Date型
+        _titleText = view.findViewById(R.id.titleText)
+        var format = SimpleDateFormat("yyyy年 MM月")
 
-        // 文字列にする  "yyyy-MM-dd" の形にすること SQLでバインドするため  期間を指定してSELECTする
-        val fDayString = SimpleDateFormat("yyyy-MM-dd").format(firstDate)  // String型
-        val lDayString = SimpleDateFormat("yyyy-MM-dd").format(lastDate)  // String型
+        // ここで条件分岐します
+        // ここで条件分岐します
+        var title: String? = ""
+        if (prevButtonDate != null) {  //  null かどうかのチェックが必要
+            title = format.format(prevButtonDate)
+            dates = _dateManager.getDays(prevButtonDate) // 引数ありのgetDays(Date date)　を呼び出す
+        } else if (nextButtonDate != null) {  //  null かどうかのチェックが必要
+            title = format.format(nextButtonDate)
+            dates = _dateManager.getDays(nextButtonDate) // 引数ありのgetDays(Date date)　を呼び出す
+            //  null かどうかのチェックが必要
+        } else if (specifyDate != null) {  // 指定の日付のカレンダーを表示するならば
+            title = format.format(specifyDate)
+            dates = _dateManager.getDays(specifyDate) // 引数ありのgetDays(Date date)　を呼び出す
+        }
+        _titleText.text = title
 
-        // リストや配列のファクトリ関数である listOf や arrayOf の引数に何も指定しないと、空の配列やリストを作成することができます
-        // 通常は MutableList の方を使えばいい
-        // データベースから取得した データを データクラスSchedule のインスタンスにして、リストにしていく
-        val list = mutableListOf<Schedule>()  // Schedule は　データクラスです
 
-        val context = this.context  // this.activity でもいい
-        // ヘルパーオブジェクトの取得
-        _helper = TimeScheduleDatabaseHelper(context)
+        val firstDate = dates?.get(0)  // Date型
+        val lastDate = dates?.get(dates.size -1 )   // Date型
+        // SQLのバインドに使う 期間を指定してSELECTするため
+        // SQLのバインドに使う 期間を指定してSELECTするため
+        val firstDatestr = SimpleDateFormat("yyyy-MM-dd").format(firstDate)
+        val lastDatestr = SimpleDateFormat("yyyy-MM-dd").format(lastDate)
+
+        // 月のカレンダー(１週目に表示した前の月や　最後の週に表示してある後ろの月　の分も含む)に表示するリスト
+
+        // 月のカレンダー(１週目に表示した前の月や　最後の週に表示してある後ろの月　の分も含む)に表示するリスト
+       //  val list: List<Schedule> = ArrayList()
+        val list = mutableListOf<Schedule>()
+        _helper = TimeScheduleDatabaseHelper(this.activity) // _helper.close();をすること
+        //  データベースを取得する
         var db: SQLiteDatabase? = null
+
         try {
-             db = _helper.getWritableDatabase()
+            db = _helper.getWritableDatabase()
             val sqlSelect =
                 "SELECT * FROM timeschedule WHERE scheduledate >= ? AND scheduledate <= ? ORDER BY starttime ASC"
-            val params = arrayOf<String>(fDayString, lDayString)
+            val params = arrayOf<String>(firstDatestr, lastDatestr)
 
             val cursor: Cursor = db.rawQuery(sqlSelect, params)
 
@@ -125,21 +151,11 @@ class CurrentMonthFragment : Fragment() {
             _helper.close()   // ヘルパーを解放する  ここで解放する
         }
 
-        // ここから
-         _titleText = view.findViewById<TextView>(R.id.titleText)
-        // 最初の土曜日を取得する   最初の土曜日は、その月に必ずなってるから
-        // 最初の土曜日を取得する   最初の土曜日は、その月に必ずなってるから
-         val firstSaturdayDate: Date = dates.get(6)
+        // 表示用のフォーマットし直し
+        format = SimpleDateFormat("d") // "dd" だと　　01  02 となってしまう
 
-        var format : SimpleDateFormat = SimpleDateFormat("今月のカレンダー yyyy年 MM月")
-        val title : String = format.format(firstSaturdayDate)
-        _titleText.text = title
-
-        // 表示用のフォートマットし直し
-        format = SimpleDateFormat("d")  // "dd" だと 01 02 となってしまうので "d" とする
-
-        // もう一つフォーマット用意 非表示のTextViewに使う
-        val sdFormat : SimpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
+        // もう一つ必要  ループの中で使うためここでインスタンスを生成しておく  表示はしないけど必要
+        val sdFormat = SimpleDateFormat("yyyy/MM/dd") //  2017/03/02
 
         // 比較をするために本日現在を取得する
         val calendar = Calendar.getInstance()
@@ -149,14 +165,14 @@ class CurrentMonthFragment : Fragment() {
 
 
         /**
-         * RecyclerViewで CardViewに表示するリスト.
-         * データクラスCalendarCellItem型のリスト
+         * 表示だけのテキストのリスト
          */
         val data = mutableListOf<CalendarCellItem>()  // CalendarCellItem は　データクラスです
         var item : CalendarCellItem? = null
 
-        for ( i in 0..dates.size - 1) {  // 0 からにする リストの添字だから
-            var date : Date = dates.get(i)
+
+        for ( i in 0.. dates?.size!! - 1) {  // 0 からにする リストの添字だから
+            var date : Date = dates?.get(i)
             // Calendarに変換する
             calendar.time = date
             val y = calendar[Calendar.YEAR]
@@ -178,7 +194,7 @@ class CurrentMonthFragment : Fragment() {
                 val scheduledate: String = schedule.scheduledate // "2022-03-25"
 
                 if ( y ==  (scheduledate.substring(0, 4)).toIntOrNull() &&  m == (scheduledate.substring(5, 7)).toIntOrNull()
-                       && d == (scheduledate.substring(8)).toIntOrNull()) {
+                    && d == (scheduledate.substring(8)).toIntOrNull()) {
                     // 同じ日付のものが見つかったら セルの中に表示するので
                     var scheduleTitle : String =  schedule.scheduletitle
                     //  タイトルに改行があったら取り除いて、カレンダーのCardViewに表示したいので
@@ -192,7 +208,7 @@ class CurrentMonthFragment : Fragment() {
             }
 
             // データクラスのインスタンスを生成する
-           item = CalendarCellItem(i.toLong(), dateText, todayText, viewGoneText, schedules)  // コンストラクタ
+            item = CalendarCellItem(i.toLong(), dateText, todayText, viewGoneText, schedules)  // コンストラクタ
         }
         if (item != null) {
             data.add(item)
@@ -225,6 +241,5 @@ class CurrentMonthFragment : Fragment() {
     fun is_isLayoutXLarge(): Boolean {
         return _isLayoutXlarge
     }
-
 
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <fragment
+            android:id="@+id/timeScheduleFragment"
+            android:name="to.msn.wings.kotlincalendarrecyclerview.TimeScheduleFragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"/>
+
+        <FrameLayout
+            android:id="@+id/timeScheduleFrame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="50dp"
+            android:layout_weight="0.6"
+            android:background="?android:attr/detailsElementBackground"/>
+
+    </LinearLayout>
+
+</FrameLayout>

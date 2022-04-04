@@ -49,6 +49,8 @@ class TimeScheduleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        val view: View = inflater.inflate(R.layout.fragment_time_schedule, container, false)
+
         val parentActivity: Activity? = activity
         // 遷移してきたので、遷移先から、データを取得する
         val intent = parentActivity!!.intent // CalendarAdapterクラスのリスナーで画面遷移するように実装してる
@@ -72,12 +74,12 @@ class TimeScheduleFragment : Fragment() {
 
         // インナークラスで使うために final で定数に
         val DATE = date!!
-        _currentMonButton = requireView().findViewById(R.id.currentMonButton)
-        _returnMonButton = requireView().findViewById(R.id.returnMonButton)
-        _day = requireView().findViewById(R.id.titleText)
+        _currentMonButton = view.findViewById(R.id.currentMonButton)
+        _returnMonButton = view.findViewById(R.id.returnMonButton)
+        _day = view.findViewById(R.id.titleText)
         _day.setText(scheduleDayText)
 
-        _day_today = requireView().findViewById(R.id.day_today)
+        _day_today = view.findViewById(R.id.day_today)
         if (todayString != "") {
             todayString = "今日の予定 $todayString "
         }
@@ -198,8 +200,7 @@ class TimeScheduleFragment : Fragment() {
 
 
         // タイムスケジュールを新規登録するボタンにリスナーをつける
-        // タイムスケジュールを新規登録するボタンにリスナーをつける
-        _addButton = requireView().findViewById(R.id.addButton)
+        _addButton = view.findViewById(R.id.addButton)
         val FINALDATE: Date = date // 内部クラスで使うので final  定数にする
 
         _addButton.setOnClickListener {
@@ -239,7 +240,7 @@ class TimeScheduleFragment : Fragment() {
             }
         }
 
-        val rv: RecyclerView = requireView().findViewById(R.id.rv)
+        val rv: RecyclerView = view.findViewById(R.id.rv)
         rv.setHasFixedSize(true) // パフォーマンス向上
 
         val manager = LinearLayoutManager(parentActivity)

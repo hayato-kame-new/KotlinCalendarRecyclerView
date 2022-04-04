@@ -50,11 +50,15 @@ class ScheduleFormFragment : Fragment() {
         // 注意　getFragmentManager() 非推奨になりました
         val manager: FragmentManager = parentFragmentManager
         // フラグメントマネージャーから、 所属しているアクティビティの上に乗ってるフラグメントが取得できる TimeScheduleFragmentを取得する
-        val timeScheduleFragment: TimeScheduleFragment =
-            manager.findFragmentById(R.id.timeScheduleFragment) as TimeScheduleFragment
+        // nullだったらキャストできません java.lang.NullPointerException なので TimeScheduleFragment? にして null許容型にしても、キャストは nullに対してできないのでだめ
+//        val timeScheduleFragment: TimeScheduleFragment? =
+//            manager.findFragmentById(R.id.timeScheduleFragment) as TimeScheduleFragment
+
+        val fragmentObject: Fragment? =
+            manager.findFragmentById(R.id.timeScheduleFragment)
 
         // ScheduleFormFragment自分自身と、　同じアクティビティ上に、 TimeScheduleFragment が乗っていたら 大画面   nullだったらスマホサイズ
-        if (timeScheduleFragment == null) {
+        if (fragmentObject == null) {
             // 通常(スマホサイズ)画面
             _isLayoutXlarge = false
         }
@@ -95,10 +99,10 @@ class ScheduleFormFragment : Fragment() {
         // 個々のデータを取得 うまく取得できなかった時のために String型は ""で初期化  Date型は nullで初期化
         val date: Array<Date?> = arrayOf(null)
         var action = ""
-        var timeString = "" // 新規の時には送られこない 編集の時だけ送られてくる
+        var timeString : String? = "" // 新規の時には送られこない 編集の時だけ送られてくる null許容型にしないとだめ
 
-        var scheduleTitleString = ""
-        var scheduleMemoString = ""
+        var scheduleTitleString : String? = ""  // 新規の時には送られこない 編集の時だけ送られてくる null許容型にしないとだめ
+        var scheduleMemoString : String? = ""  // 新規の時には送られこない 編集の時だけ送られてくる null許容型にしないとだめ
         var intId: Int? = null
 
         if (extras != null) {
@@ -106,9 +110,10 @@ class ScheduleFormFragment : Fragment() {
             action = extras.getString("action")!! // "add" もしくは "edit" が入ってきます
 
             // 編集の時にだけ、 時間とタイトルとメモの情報が intentに乗っています 新規の時には送られこないので null が入ってくる
-            timeString = extras.getString("timeString")!! // 新規の時には送られこないので null が入ってくる 編集の時だけ送られてくる
-            scheduleTitleString = extras.getString("scheduleTitleString")!! // 新規の時は nullになる
-            scheduleMemoString = extras.getString("scheduleMemoString")!! // 新規の時は nullになる
+
+            timeString = extras.getString("timeString") // !! はつけない  新規の時には送られこないので null が入ってくる 編集の時だけ送られてくる
+            scheduleTitleString = extras.getString("scheduleTitleString") //  !! はつけない 新規の時は nullになる
+            scheduleMemoString = extras.getString("scheduleMemoString") //  !! はつけない 新規の時は nullになる
             intId = extras.getInt("intId") // 新規の時は nullになる
         }
 
@@ -117,9 +122,9 @@ class ScheduleFormFragment : Fragment() {
             action = extras.getString("action")!! // "add" もしくは "edit" が入ってきます
 
             // 編集の時にだけ、 時間とタイトルとメモの情報が intentに乗っています 新規の時には送られこないので null が入ってくる
-            timeString = extras.getString("timeString")!! // 新規の時には送られこないので null が入ってくる 編集の時だけ送られてくる
-            scheduleTitleString = extras.getString("scheduleTitleString")!! // 新規の時は nullになる
-            scheduleMemoString = extras.getString("scheduleMemoString")!! // 新規の時は nullになる
+            timeString = extras.getString("timeString") // !! はつけない  新規の時には送られこないので null が入ってくる 編集の時だけ送られてくる
+            scheduleTitleString = extras.getString("scheduleTitleString") //  !! はつけない 新規の時は nullになる
+            scheduleMemoString = extras.getString("scheduleMemoString") //  !! はつけない 新規の時は nullになる
             intId = extras.getInt("intId") // 新規の時は nullになる
         }
         // 後でインナークラスで dateを使うので定数にしておく final つける

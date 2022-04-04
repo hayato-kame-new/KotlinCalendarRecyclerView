@@ -272,8 +272,6 @@ class ScheduleFormFragment : Fragment() {
             (_buttonFlagMap as HashMap<String, Boolean>).put("scheTitle", true );  // 編集では、最初は押せるようになってる
         }
 
-
-        // 遷移してくる前に表示していた　カレンダーの年と月に戻るために、
         // 遷移してくる前に表示していた　カレンダーの年と月に戻るために、
         _returnMonButton.setOnClickListener { // インナークラスなので 定数 DATEを使う
             val intent = Intent(parentActivity, MonthCalendarActivity::class.java)
@@ -286,7 +284,6 @@ class ScheduleFormFragment : Fragment() {
         }
 
         //  現在(今月)のカレンダーの表示へ遷移する MainActivityに戻る  自分自身が所属するアクティビティを終了させます
-        //  現在(今月)のカレンダーの表示へ遷移する MainActivityに戻る  自分自身が所属するアクティビティを終了させます
         _currentMonButton.setOnClickListener {
             val intent = Intent(parentActivity, MainActivity::class.java)
             startActivity(intent)
@@ -295,7 +292,6 @@ class ScheduleFormFragment : Fragment() {
             parentActivity!!.finish()
         }
 
-        // スケジュールタイトルのEditTextにイベントリスナーをつける  何か入力をしたら、保存ボタンが押せるフラグMapに 値をtrueで登録する
         // スケジュールタイトルのEditTextにイベントリスナーをつける  何か入力をしたら、保存ボタンが押せるフラグMapに 値をtrueで登録する
         _editTextScheTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
@@ -316,10 +312,8 @@ class ScheduleFormFragment : Fragment() {
 
         val setDaySql = java.sql.Date(setL)
         //  内部クラスで使うから final にしておく 初期値は、遷移してきた時に選択してあった日付にしておくので
-        //  内部クラスで使うから final にしておく 初期値は、遷移してきた時に選択してあった日付にしておくので
         val sqlDateArray = arrayOf(setDaySql) // 配列の中身なら書き換え可能だから 配列にする
 
-        // new 以降は　無名クラス 匿名クラスなので　　その中で使うなら　定数にするのでDATEを使う
         // new 以降は　無名クラス 匿名クラスなので　　その中で使うなら　定数にするのでDATEを使う
         _calendarView.setOnDateChangeListener { calendarView, year, month, dayOfMonth ->
             //  CalendarViewで日にちが選択された時に呼び出されるリスナークラス
@@ -334,8 +328,6 @@ class ScheduleFormFragment : Fragment() {
             sqlDateArray[0] = sqlDate
         }
 
-        // データベースへ登録するための フィールド 内部クラスで使うから final にしておく
-        // 開始時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
         // データベースへ登録するための フィールド 内部クラスで使うから final にしておく
         // 開始時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
         val _START_HOUR_STR_ARRAY = arrayOf("")

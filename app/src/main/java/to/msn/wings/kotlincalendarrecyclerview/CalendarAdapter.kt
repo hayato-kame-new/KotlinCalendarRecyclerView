@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class CalendarAdapter(private val _data : List<CalendarCellItem>) : RecyclerView.Adapter<CalendarCellViewHolder>() {
 
-    private var _isLayoutXlarge : Boolean = false
+    private var _isLayoutXLarge : Boolean = false
     /**
      * ビューホルダーを生成.
      * import android.R を書くとエラーになるので注意.
@@ -57,14 +57,13 @@ class CalendarAdapter(private val _data : List<CalendarCellItem>) : RecyclerView
                 fmanager.findFragmentById(R.id.currentMonthFragment) as CurrentMonthFragment?
 
             // このクラスのインスタンスフィールドに値をセット このあと、onBindViewHolderでも使うため
-            _isLayoutXlarge =
-                currentMonthFragment!!.is_isLayoutXLarge() // currentMonthFragmentインスタンスのゲッターメソッドを使う
+            _isLayoutXLarge = currentMonthFragment!!.is_isLayoutXLarge() // currentMonthFragmentインスタンスのゲッターメソッドを使う
+
         } else if (monthCalendarActivity != null) {
             fmanager = (monthCalendarActivity as FragmentActivity).supportFragmentManager
             // MonthCalendarActivityの 上には MonthCalendarFragment が乗っているので
-            val monthCalendarFragment =
-                fmanager.findFragmentById(R.id.monthCalendarFragment) as MonthCalendarFragment?
-            _isLayoutXlarge = monthCalendarFragment!!.is_isLayoutXLarge()
+            val monthCalendarFragment = fmanager.findFragmentById(R.id.monthCalendarFragment) as MonthCalendarFragment?
+            _isLayoutXLarge = monthCalendarFragment!!.is_isLayoutXLarge()
         }
 
         cardView.setOnClickListener(View.OnClickListener { view ->
@@ -79,6 +78,7 @@ class CalendarAdapter(private val _data : List<CalendarCellItem>) : RecyclerView
             intent.putExtra("todayString", todayString)
             context.startActivity(intent)
         })
+
         return CalendarCellViewHolder(cardView)
     }
 
@@ -131,13 +131,14 @@ class CalendarAdapter(private val _data : List<CalendarCellItem>) : RecyclerView
             //  dateText.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         }
 
-        if (_isLayoutXlarge) {
+        if (_isLayoutXLarge) {
             // もし画面サイズがタブレットサイズだったら ここで属性を変更できる
             holder.dateText.setTextSize(28F);
             holder.schedules.setTextSize(18F);
         } else {
             // 通常(スマホサイズ)画面ならば
             // ここで、属性を変更できる
+         //    holder.schedules.setTextSize(13F);
         }
     }
 

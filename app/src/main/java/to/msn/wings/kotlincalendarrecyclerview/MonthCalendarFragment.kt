@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -285,6 +286,29 @@ class MonthCalendarFragment : Fragment() {
         // 最後に return viewをすること
         return view
     }
+
+    /**
+     * onActivityCreated() メソッドは非推奨になりました。 onViewStateRestored に書いてください
+     * ここでViewの状態を復元する
+     * onCreate   onCreateView   onViewCreated   非推奨のonActivityCreated   推奨のonViewStateRestored  の順で呼ばれる
+     * @param savedInstanceState
+     */
+    override fun onViewStateRestored(@Nullable savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        val parentActivity: Activity? =
+            activity // このフラグメントの自分　が所属するアクティビティを取得する MonthCalendarActivity
+
+        // 自分が所属するアクティビティから、 id が　activityMonthCalendarFrame　の　FrameLayoutを取得する
+        val activityMonthCalendarFrame =
+            parentActivity!!.findViewById<View>(R.id.activityMonthCalendarFrame)
+
+        // この判定は CardViewに表示するテキストのサイズなどの切り替えを画面サイズによって設定する時に使う CalendarAdaoterクラスで使うために必要
+        if (activityMonthCalendarFrame == null) {  // nullならば、大画面ではないので
+            // 画面判定フラグを通常画面(スマホサイズ)とする
+            _isLayoutXLarge = false // falseだと 通常画面(スマホサイズ)
+        }
+    }
+
 
     fun is_isLayoutXLarge(): Boolean {
         return _isLayoutXLarge

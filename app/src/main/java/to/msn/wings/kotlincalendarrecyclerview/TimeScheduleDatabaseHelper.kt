@@ -19,8 +19,6 @@ class TimeScheduleDatabaseHelper(context: Context?): SQLiteOpenHelper(context, D
         private const val VERSION = 1
     }
 
-
-
     override fun onCreate(p0: SQLiteDatabase?) {
         // テーブル作成用SQL文字列の作成。
         val sb = StringBuilder()
@@ -34,7 +32,7 @@ class TimeScheduleDatabaseHelper(context: Context?): SQLiteOpenHelper(context, D
         sb.append(");")
         val sql = sb.toString()
 
-        // SQLの実行。 ?. セーフコール演算子
+        // SQLの実行
         p0?.execSQL(sql)
     }
 

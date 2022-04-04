@@ -96,7 +96,6 @@ class ScheduleFormFragment : Fragment() {
         _deleteButton = view.findViewById(R.id.deleteButton)
 
         // 個々のデータを取得 うまく取得できなかった時のために String型は ""で初期化  Date型は nullで初期化
-        // 個々のデータを取得 うまく取得できなかった時のために String型は ""で初期化  Date型は nullで初期化
         val date: Array<Date?> = arrayOf(null)
         var action = ""
         var timeString : String? = "" // 新規の時には送られこない 編集の時だけ送られてくる null許容型にしないとだめ
@@ -127,7 +126,7 @@ class ScheduleFormFragment : Fragment() {
             scheduleMemoString = extras.getString("scheduleMemoString") //  !! はつけない 新規の時は nullになる
             intId = extras.getInt("intId") // 新規の時は nullになる
         }
-        // 後でインナークラスで dateを使うので定数にしておく final つける
+
         // 後でインナークラスで dateを使うので定数にしておく final つける
         val DATE = date[0]!!
         val ACTION = action
@@ -162,7 +161,7 @@ class ScheduleFormFragment : Fragment() {
         _editTextScheTitle = view.findViewById(R.id.editTextScheTitle);
         _editTextScheMemo = view.findViewById(R.id.editTextScheMemo);
 
-        // ACTION の値によって分岐できるようにする
+
         // ACTION の値によって分岐できるようにする
         if (ACTION == "add") {  // 新規の時
             _formTitle.setText(R.string.tvFormTitleAdd) // 新規の時に　新規スケジュール登録画面　と表示する
@@ -196,16 +195,14 @@ class ScheduleFormFragment : Fragment() {
                 _editTextScheMemo.setText(scheduleMemoString)
             }
         }
-        // カレンダービューに初期値をセット
+
         // カレンダービューに初期値をセット
         _calendarView = view.findViewById(R.id.calendarView)
-        // ここで 新規の時も 編集の時にも CalendarViewに  初期値として 送られてきた 日時を設定します。
+
         // ここで 新規の時も 編集の時にも CalendarViewに  初期値として 送られてきた 日時を設定します。
         _calendarView.date = DATE.time // 引数には long型 カレンダービューに初期値設定
 
 
-        // ボタンの大きさなどを設定     getColor(int id)を使いたいのだが　非推奨なので API 23 から Deprecated（非推奨）
-        //  代わりに public int getColor (int id, Resources.Theme theme) を使います
 
         // ボタンの大きさなどを設定     getColor(int id)を使いたいのだが　非推奨なので API 23 から Deprecated（非推奨）
         //  代わりに public int getColor (int id, Resources.Theme theme) を使います
@@ -221,13 +218,12 @@ class ScheduleFormFragment : Fragment() {
             // API 23 未満 の時には　非推奨メソッドを使用します
             _deleteButton.setBackgroundColor(requireActivity().resources.getColor(R.color.colorAccent))
         }
-        // ボタン を少し小さくするには xmlファイルで設定するには「wrap_content」になってるので一旦0にする
+
         // ボタン を少し小さくするには xmlファイルで設定するには「wrap_content」になってるので一旦0にする
         _deleteButton.minimumWidth = 0 // ボタンの最小幅がデフォルトで64dipである  一旦0にする
 
         _deleteButton.width = 180
 
-        // Date型の getYear getMonth getDay　は　非推奨メソッドなので、SimpleDateFormatを使い、文字列として取得する
 
         // Date型の getYear getMonth getDay　は　非推奨メソッドなので、SimpleDateFormatを使い、文字列として取得する
         var sdf = SimpleDateFormat("yyyy年M月") // MM に　すると 01 02 03   M にすると 1  2  3
@@ -236,15 +232,14 @@ class ScheduleFormFragment : Fragment() {
 
         _returnMonButton = view.findViewById(R.id.returnMonButton)
         _returnMonButton.text = str + "カレンダーに戻る"
-        // 比較するために フォーマットし直して
+
         // 比較するために フォーマットし直して
         sdf = SimpleDateFormat("yyyy年MM月") // MM に　すると 01 02 03
 
         val strMM: String = sdf.format(date[0])
         val year = strMM.substring(0, 4).toInt()
         val month = strMM.substring(5, 7).toInt()
-        // もし、今月ならば returnMonButtonを非表示にする
-        // 現在を取得して
+
         // もし、今月ならば returnMonButtonを非表示にする
         // 現在を取得して
         val localdateToday: LocalDate = LocalDate.now()
@@ -336,20 +331,18 @@ class ScheduleFormFragment : Fragment() {
         // データベースへ登録するための フィールド 内部クラスで使うから final にしておく
         // 開始時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
         val _START_HOUR_STR_ARRAY = arrayOf("")
-        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+
         // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
         val _END_HOUR_STR_ARRAY = arrayOf("")
 
-        // 開始の分を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
 
         // 開始の分を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
         val _START_MINUTES_STR_ARRAY = arrayOf("")
-        // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
+
         // 終了時間を表す文字列の定数　インナークラスで使うから final で定数化しておく必要がある。また、配列にすると、要素を書き換えるようにできる
         val _END_MINUTES_STR_ARRAY = arrayOf("")
 
 
-        // 開始  時間にリスナーつける
         // 開始  時間にリスナーつける
         _spinnerStartHour.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
@@ -395,7 +388,6 @@ class ScheduleFormFragment : Fragment() {
         }
 
 
-        // 終了時間にリスナーつける
         // 終了時間にリスナーつける
         _spinnerEndHour.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
@@ -444,7 +436,6 @@ class ScheduleFormFragment : Fragment() {
         }
 
         // 開始の　分にリスナーつける
-        // 開始の　分にリスナーつける
         _spinnerStartMinutes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
 
@@ -487,7 +478,6 @@ class ScheduleFormFragment : Fragment() {
         }
 
 
-        // 終了の分にリスナーをつける
         // 終了の分にリスナーをつける
         _spinnerEndMinutes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
@@ -538,7 +528,6 @@ class ScheduleFormFragment : Fragment() {
         }
 
 
-        // 保存ボタンを押した時にリスナーをつける 新規作成と 編集の時 条件分岐する
         // 保存ボタンを押した時にリスナーをつける 新規作成と 編集の時 条件分岐する
         _saveButton.setOnClickListener { // _id　は　主キーで もし主キーを連番のIDにしたい場合、INTEGERで「PRIMARY KEY」を指定するようにします
             // そうすると　autoincrement をつけなくても自動採番する insetの時に _idを書かない 自動採番するので
@@ -611,7 +600,6 @@ class ScheduleFormFragment : Fragment() {
         }
 
 
-        // 削除ボタンにリスナーつける  ダイアログフラグメント DeleteConfirmDialogFragment を表示する
         // 削除ボタンにリスナーつける  ダイアログフラグメント DeleteConfirmDialogFragment を表示する
         _deleteButton.setOnClickListener { // 定数 DATE を使う  "yyyy/MM/dd"
             val strDate = SimpleDateFormat("yyyy/MM/dd").format(DATE)

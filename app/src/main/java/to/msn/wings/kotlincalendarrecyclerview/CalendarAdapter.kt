@@ -19,9 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class CalendarAdapter(private val _data : List<CalendarCellItem>) : RecyclerView.Adapter<CalendarCellViewHolder>() {
-    // ateinitとDelegates.notNullは、初期化を遅らせ、オブジェクトにnullが入らないようにします。 似ています様々な違いがあります
-    // lateinit は  primitive type(Int、Boolean)は使用できません
-   //  private var _isLayoutXlarge by Delegates.notNull<Boolean>()
+
     private var _isLayoutXlarge : Boolean = false
     /**
      * ビューホルダーを生成.

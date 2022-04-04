@@ -22,7 +22,7 @@ import java.util.*
 
 class CurrentMonthFragment : Fragment() {
 
-    private var _isLayoutXlarge : Boolean = true  // 初期値を trueにしておく
+    private var _isLayoutXLarge : Boolean = true  // 初期値を trueにしておく
 
     // 変数を lateinit で宣言することにより、初期化タイミングを onCreate() 呼び出しまで遅延させています。
     // lateinit 変数は var で宣言しないといけないことに注意してください
@@ -269,7 +269,7 @@ class CurrentMonthFragment : Fragment() {
     }
 
     fun is_isLayoutXLarge(): Boolean {
-        return _isLayoutXlarge
+        return _isLayoutXLarge
     }
 
 

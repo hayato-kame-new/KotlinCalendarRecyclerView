@@ -10,11 +10,11 @@ class TimeScheduleDatabaseHelper(context: Context?): SQLiteOpenHelper(context, D
     // クラス内のprivate定数を宣言するためにcompanion objectブロックとする。
     companion object {
         /**
-         * データベースファイル名の定数フィールド。
+         * データベースファイル名の定数
          */
         private const val DBNAME = "timeschedule.sqlite"
         /**
-         * バージョン情報の定数フィールド。
+         * バージョン情報の定数
          */
         private const val VERSION = 1
     }

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class CalendarCellViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    //　フィールド
+    //　プロパティ
     var view : View = itemView  // ルート要素のビューここだと ConstraintLayoutのこと
 
     var dateText : TextView = view.findViewById(R.id.dateText)
